@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Velocity Angle</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <canvas width="400" height="400"></canvas>
+
+  <script src="../utils.js"></script>
+  <script src="arrow.js"></script>
+
+  <script>
+
+    window.onload = function() {
+
+        var canvas = document.querySelector('canvas'),
+            ctx    = canvas.getContext('2d'),
+            mouse  = utils.captureMouse(canvas),
+            arrow  = new Arrow(),
+            vr     = 2;
+
+        arrow.x = canvas.width / 2;
+        arrow.y = canvas.height / 2;
+
+        (function drawFrame () {
+
+            window.requestAnimationFrame(drawFrame, canvas);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            arrow.rotation += vr * Math.PI / 180;
+            arrow.draw(ctx);
+
+        }());
+
+    };
+
+  </script>
+
+</body>
+
+</html>
