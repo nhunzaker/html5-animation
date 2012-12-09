@@ -1,5 +1,9 @@
 /**
- * @class World
+ * @name World
+ * @desc The world object contains all units and obstacles and handles updating
+ *       the map. It also calculates collisions.
+ *
+ * @param {Canvas} canvas - The target canvas element for the scene.
  */
 
 define([
@@ -25,8 +29,6 @@ define([
     };
 
     World.prototype.addShip = function(x, y, id) {
-
-        if (!id) throw "Ship must have id";
 
         var ship = new Ship(x, y, id);
 

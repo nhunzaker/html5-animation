@@ -1,8 +1,13 @@
 /**
- * @class Obstacle
+ * @name Obstacle
+ * @desc A standard boundary object. Given a collection of points,
+ *       it will generate a blocking object.
+ *
+ * @param {Array} points - A list of {x,y} values that describe the shape.
+ * @param {String} color - An optional value to change the color of the outline.
  */
 
-define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
+define(['util'], function($) {
 
     function Obstacle(points, color) {
 
@@ -10,12 +15,12 @@ define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
 
         color = color || "#fff";
 
-        this.id = $.GUID();
+        this.id = $.getGUID();
 
         this.color = color;
         this.points = points || [];
 
-        $.extend( this, new EventEmitter() );
+        $.extend( this, new $.EventEmitter() );
 
     }
 

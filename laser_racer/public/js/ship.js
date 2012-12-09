@@ -1,12 +1,20 @@
 /**
- * @class Ship
+ * @name Ship
+ * @desc The basic unit players use to navigate around the map.
+ *       Ships can move and shoot
+ *
+ * Events:
+ * collision - when this object comes in conflict with another
+ * shoot     - when the "shoot()" method is called, this is useful
+ *             for managing bullets
+ * death     - when the ship's health reaches 0
  */
 
-define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
+define(['util'], function($) {
 
     function Ship(x, y, id) {
 
-        this.id = id || Date.now();
+        this.id = id || $.getGUID();
         this.x = x || 0;
         this.y = y || 0;
 
@@ -23,7 +31,7 @@ define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
         this.size = 15;
         this.rotation = 0;
 
-        $.extend(this, new EventEmitter());
+        $.extend(this, new $.EventEmitter());
 
         this.on('collision', function(other) {
 

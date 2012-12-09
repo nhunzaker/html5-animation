@@ -1,8 +1,23 @@
 /**
- * @class Ship
+ * @name Bullet
+ *
+ * @desc Given a point and rotation, bullets will advance forever until they
+ *       collide with another object.
+ *
+ * @param {Number} x         - The initial x coordinate position
+ * @param {Number} y         - The initial y coordinate position
+ * @param {Number} rotation  - The initial facing of the object in radians
+ * @param {Number} offset    - Automatically calculates offset of initial given
+ *                             point based upon rotation
+ * @param {Number} vx        - Velocity x
+ * @param {Number} vy        - Velocity y
+ *
+ * Events:
+ * collision - when this object comes in conflict with another
+ *
  */
 
-define(['util', 'lib/eventemitter2', 'bullet'], function($, EventEmitter, Bullet) {
+define(['util'], function($) {
 
     function Bullet (x, y, rotation, offset, vx, vy) {
 
@@ -24,7 +39,7 @@ define(['util', 'lib/eventemitter2', 'bullet'], function($, EventEmitter, Bullet
         this.size = 10;
         this.rotation = rotation;
 
-        $.extend(this, new EventEmitter());
+        $.extend(this, new $.EventEmitter());
 
         this.on('collision', function(other) {
             this.world.removeUnit(this);

@@ -7,11 +7,31 @@ define(['bullet'], function(Bullet) {
 
     var Multiplayer = function(world) {
 
-        var player;
+        var socket = io.connect('http://' + window.location.hostname);
+        var player = world.addShip(545, 368);
+
+        // On shot, sync player information and send out a
+        // request for a bullet
+        player.on("shoot", function(bullet) {
+            syncPlayer();
+            spawnBullet();
+        });
+
+        // Players take damage on collisions, when this happens
+        // we need to sync the change to all clients
+        player.on("collision", syncPlayer);
+
+        // On death, restart (the collision event will sync info)
+        player.on("death", function() {
+            alert("Oh snap, you died! Restarting...");
+            window.location = window.location;
+        });
+
 
         // Syncing
         // -------------------------------------------------- //
 
+        // Get all player information and request syncing
         function syncPlayer() {
 
             socket.emit("sync_player", {
@@ -26,6 +46,8 @@ define(['bullet'], function(Bullet) {
 
         }
 
+        // Send a request to spawn a bullet at the current
+        // position, rotation, and velocity of the player
         function spawnBullet() {
 
             socket.emit("shoot", {
@@ -38,28 +60,11 @@ define(['bullet'], function(Bullet) {
 
         }
 
-        var socket = io.connect('http://' + window.location.hostname);
 
-        socket.on('create_player', function (data) {
+        // Socket Events
+        // -------------------------------------------------- //
 
-            player = world.addShip(545, 368, data.id);
-
-            player.on("shoot", function(bullet) {
-                syncPlayer();
-                spawnBullet();
-            });
-
-            player.on("collision", syncPlayer);
-
-            player.on("death", function() {
-                alert("Oh snap, you died!");
-                window.location = window.location;
-            });
-
-            syncPlayer();
-
-        });
-
+        // Syncs player data based upon their GUID
         socket.on("sync_player", function(data) {
 
             var ship = world.units.get(data.id);
@@ -75,14 +80,7 @@ define(['bullet'], function(Bullet) {
 
         });
 
-        socket.on('remove_player', function (data) {
-
-            for ( var unit in world.units) {
-                if (unit.id === data.id) world.removeUnit(unit);
-            }
-
-        });
-
+        // Creates bullets
         socket.on("shoot", function(d) {
 
             var bullet = new Bullet(
@@ -98,10 +96,16 @@ define(['bullet'], function(Bullet) {
             player.world.units.put(bullet.id, bullet);
         });
 
+        // Start an initial sync so players see user right as they
+        // sign on
+        syncPlayer();
+
 
         // Keyboard input
         // -------------------------------------------------- //
 
+        // Keydown events handle standard movement, left/right change
+        // rotation, up adds thrust.
         window.addEventListener('keydown', function(event) {
 
             switch (event.keyCode) {
@@ -114,6 +118,9 @@ define(['bullet'], function(Bullet) {
 
         }, false);
 
+        // Note: shoot is a keyup event so we don't have millions of
+        // bullets passing through the server. This could probably
+        // be optimized with a debounce method.
         window.addEventListener('keyup', function(event) {
 
             switch (event.keyCode) {

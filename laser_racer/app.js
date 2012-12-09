@@ -18,13 +18,6 @@ function getGUID() {
 
 io.sockets.on('connection', function (socket) {
 
-    // Generate a GUID for the player
-    var id = getGUID();
-
-    // Send this new id down to the new player's client so they can
-    // start playing
-    socket.emit("create_player", { id: id });
-
     // Keeps information about a player in sync across all clients
     socket.on('sync_player', function(data) {
         socket.broadcast.emit("sync_player", data);
@@ -35,11 +28,6 @@ io.sockets.on('connection', function (socket) {
         data.id = getGUID();
         socket.emit("shoot", data);
         socket.broadcast.emit("shoot", data);
-    });
-
-    // Remove players when the client disconnects
-    socket.on("disconnect", function() {
-        socket.broadcast.emit("remove_player", { id: id });
     });
 
 });

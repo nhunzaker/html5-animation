@@ -1,5 +1,6 @@
 /**
  * @name Map
+ * @desc A simple list of coordinates that describes the game map
  */
 
 define(function() {
