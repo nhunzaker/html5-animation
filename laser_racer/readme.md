@@ -1,6 +1,6 @@
 # Laser Racer
 
-A simple game written for 2D context canvas. This game doesn't really have laps (or point) -- but you can kill stuff!
+A simple game written for 2D context canvas. This game doesn't really have laps (or a point) -- but you can kill stuff!
 
 # Setup
 
