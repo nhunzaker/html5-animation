@@ -37,7 +37,7 @@ define(['util'], function($) {
 
             var self = this;
 
-            // TODO : This is hardly perfect, angles are messaged up
+            // TODO : This is hardly perfect, angles are messed up
             // and the ship glitches out too much on walls
 
             // NEWTON III : For every action there is an
