@@ -13,8 +13,8 @@ define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
         this.color = '#fff';
 
         this.thrust = 0;
-        this.health = 10;
-        this.total_health = 10;
+        this.health = 25;
+        this.total_health = 25;
 
         this.vr = 0;
         this.vx = 0;

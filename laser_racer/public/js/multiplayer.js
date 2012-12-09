@@ -42,7 +42,7 @@ define(['bullet'], function(Bullet) {
 
         socket.on('create_player', function (data) {
 
-            player = world.addShip(545, 368 + (world.units.size() * 50), data.id);
+            player = world.addShip(545, 368, data.id);
 
             player.on("shoot", function(bullet) {
                 syncPlayer();
