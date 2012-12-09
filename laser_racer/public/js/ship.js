@@ -37,10 +37,29 @@ define(['util'], function($) {
 
             var self = this;
 
-            this.x += this.vx > 0 ? -5 : 5;
-            this.y += this.vy > 0 ? -5 : 5;
-            this.vx = -0.3;
-            this.vy = -0.3;
+            // TODO : This is hardly perfect, angles are messaged up
+            // and the ship glitches out too much on walls
+
+            // NEWTON III : For every action there is an
+            // equal and opposite reaction.
+            this.vx *= -1;
+            this.vy *= -1;
+
+            // NEWTON I : "Every object in a state of uniform motion tends to
+            // remain in that state of motion unless an external force
+            // is applied to it"
+            this.vx += (other.vx || 0);
+            this.vy += (other.vy || 0);
+
+            // More third law, cause a shift in the opposite direction
+            // we use a factor of 5 because it "feels" right
+            // TODO : Factor in mass
+            this.x += this.vx > 0 ? 5 : -5;
+            this.y += this.vy > 0 ? 5 : -5;
+
+            // NEWTON II: Absorb some of the blow
+            this.vx *= 0.8;
+            this.vy *= 0.8;
 
             this.health--;
 
