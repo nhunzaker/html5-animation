@@ -9,4 +9,4 @@ node app
 ```
 
 Enjoy!
-![Laser Racer](http://nhunzaker.github.com/html5-animation/laser_racer/screenshot.png)
+![Laser Racer](https://raw.github.com/nhunzaker/html5-animation/master/laser_racer/screenshot.png)
