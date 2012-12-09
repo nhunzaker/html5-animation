@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf8">
+
+    <title>Kart</title>
+    
+    <style>
+
+        html, body { 
+            padding: 0; 
+            margin: 0; 
+        }
+
+        body {
+            background: url("images/space.jpg");
+            font-family: sans-serif;
+        }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.5);
+            display: block;
+            margin: 50px auto 0;
+        }
+
+        .control-box {
+            background: rgba(0, 0, 0, 0.75);
+            border-bottom: 1px solid rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 12px 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="scene" width="925" height="825"></canvas>
+    <div class="control-box">
+        <span>&larr;</span>
+        <span>&uarr;</span>
+        <span>&darr;</span>
+        <span>&rarr;</span>
+        <span>spacebar</span>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script data-main="js/game.js" src="js/lib/require.js"></script>
+</body>
+</html>

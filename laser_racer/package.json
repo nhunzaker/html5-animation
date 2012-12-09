@@ -1,0 +1,15 @@
+{
+  "author": "Nate <nate.hunzaker@viget.com>",
+  "name": "space_race",
+  "version": "0.0.0",
+  "dependencies": {
+    "socket.io" : "*",
+    "ejs"       : "*",
+    "express"   : "*"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
