@@ -2,22 +2,29 @@
  * @class Ship
  */
 
-define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
+define(['util', 'lib/eventemitter2', 'bullet'], function($, EventEmitter, Bullet) {
 
-    function Bullet (x, y, rotation) {
+    function Bullet (x, y, rotation, offset, vx, vy) {
 
-        this.x = x || 0;
-        this.y = y || 0;
+        if (!x === undefined)       throw "Please provide an x coordinate";
+        if (!y === undefined)       throw "Please provide an y coordinate";
+        if (rotation === undefined) throw "Please provide a radian rotational value";
+
+        offset = offset || 0;
+
+        this.x = x + (Math.cos(rotation) * offset);
+        this.y = y + (Math.sin(rotation) * offset);
 
         this.thrust = 0.7;
-        this.vr = 0;
-        this.vx = 0;
-        this.vy = 0;
+        this.vx = vx || 0;
+        this.vy = vy || 0;
 
         this.color = "lime";
 
         this.size = 10;
         this.rotation = rotation;
+
+        $.extend(this, new EventEmitter());
 
         this.on('collision', function(other) {
             this.world.removeUnit(this);
@@ -25,11 +32,7 @@ define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
 
     }
 
-    Bullet.prototype = new EE();
-
     Bullet.prototype.update = function() {
-
-        this.rotation += this.vr * Math.PI / 180;
 
         var angle = this.rotation,
             ax = Math.cos(angle) * this.thrust,

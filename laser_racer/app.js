@@ -7,25 +7,39 @@ var app    = express(),
 app.engine('html', require('ejs').renderFile);
 app.use(express.static('public'));
 
-io.set('log level', 1);
+function getGUID() {
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+
+}
 
 io.sockets.on('connection', function (socket) {
 
-    var ID = Date.now();
+    // Generate a GUID for the player
+    var id = getGUID();
 
-    socket.emit("create_player", { id: ID });
-    socket.broadcast.emit("new_player", { id: ID });
+    // Send this new id down to the new player's client so they can
+    // start playing
+    socket.emit("create_player", { id: id });
 
+    // Keeps information about a player in sync across all clients
     socket.on('sync_player', function(data) {
         socket.broadcast.emit("sync_player", data);
     });
 
+    // Generates bullets
     socket.on('shoot', function(data) {
+        data.id = getGUID();
+        socket.emit("shoot", data);
         socket.broadcast.emit("shoot", data);
     });
 
+    // Remove players when the client disconnects
     socket.on("disconnect", function() {
-        socket.broadcast.emit("remove_player", { id: ID });
+        socket.broadcast.emit("remove_player", { id: id });
     });
 
 });
@@ -33,8 +47,6 @@ io.sockets.on('connection', function (socket) {
 server.listen(3000, function() {
     console.log("   info  - http listening on port 3000");
 });
-
-app.set("state", "idle");
 
 app.get("/", function(req, res) {
     res.render("index.html");

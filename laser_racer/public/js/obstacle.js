@@ -2,7 +2,7 @@
  * @class Obstacle
  */
 
-define(['lib/eventemitter2'], function(EE) {
+define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
 
     function Obstacle(points, color) {
 
@@ -10,21 +10,14 @@ define(['lib/eventemitter2'], function(EE) {
 
         color = color || "#fff";
 
+        this.id = $.GUID();
+
         this.color = color;
         this.points = points || [];
 
-        this.on("collision", function() {
+        $.extend( this, new EventEmitter() );
 
-            self.color = "red";
-
-            setTimeout(function() {
-                self.color = color;
-            }, 200);
-
-        });
     }
-
-    Obstacle.prototype = new EE();
 
     Obstacle.prototype.update = function() {};
 

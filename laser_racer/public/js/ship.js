@@ -2,12 +2,15 @@
  * @class Ship
  */
 
-define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
+define(['util', 'lib/eventemitter2'], function($, EventEmitter) {
 
-    function Ship(x, y) {
+    function Ship(x, y, id) {
 
+        this.id = id || Date.now();
         this.x = x || 0;
         this.y = y || 0;
+
+        this.color = '#fff';
 
         this.thrust = 0;
         this.health = 10;
@@ -20,24 +23,37 @@ define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
         this.size = 15;
         this.rotation = 0;
 
+        $.extend(this, new EventEmitter());
+
         this.on('collision', function(other) {
+
+            var self = this;
 
             this.x += this.vx > 0 ? -5 : 5;
             this.y += this.vy > 0 ? -5 : 5;
-            this.vx *= -0.3;
-            this.vy *= -0.3;
+            this.vx = -0.3;
+            this.vy = -0.3;
 
-            this.health -= Math.abs(this.vx) + Math.abs(this.vy);
+            this.health--;
 
-            this.draw_collision = true;
+            this.color = "red";
+
+            setTimeout(function() {
+                self.color = '#fff';
+            }, 200);
 
         });
 
     }
 
-    Ship.prototype = new EE();
+    Ship.prototype.die = function() {
+        this.emit("death");
+        this.world.removeUnit(this);
+    };
 
     Ship.prototype.update = function() {
+
+        if (this.health <= 0) return this.die();
 
         this.rotation += this.vr * Math.PI / 180;
 
@@ -62,8 +78,7 @@ define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
         ctx.rotate(this.rotation);
         ctx.lineWidth = 1;
 
-        ctx.fillStyle = this.draw_collision? "red" : "#fff";
-        this.draw_collision = false;
+        ctx.fillStyle = this.color;
 
         ctx.beginPath();
         ctx.moveTo(10, 0);
@@ -109,7 +124,7 @@ define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
         // Render Health
         ctx.save();
         ctx.translate(this.x, this.y);
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = '#fff';
         ctx.fillRect(-15, -20, 30 * (this.health / this.total_health), 2);
         ctx.restore();
 
@@ -118,21 +133,8 @@ define(['lib/eventemitter2', 'bullet'], function(EE, Bullet) {
     };
 
     Ship.prototype.shoot = function() {
-
-        var x = this.x + (Math.cos(this.rotation) * 30);
-        var y = this.y + (Math.sin(this.rotation) * 30);
-
-        var bullet = new Bullet(x, y, this.rotation);
-        bullet.vx = this.vx;
-        bullet.vy = this.vy;
-
-        bullet.id = "bullet-" + Date.now();
-        bullet.world = this.world;
-
-        this.world.units.add(bullet);
-
-        this.emit("shoot", bullet);
-
+        this.emit("shoot");
+        return this;
     };
 
     return Ship;

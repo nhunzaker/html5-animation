@@ -2,7 +2,11 @@
  * @class World
  */
 
-define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
+define([
+    'util',
+    'obstacle',
+    'ship'
+], function($, Obstacle, Ship) {
 
     function World (canvas) {
 
@@ -12,7 +16,7 @@ define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
         this.width = canvas.width;
         this.height = canvas.height;
 
-        this.units = new Set();
+        this.units = new $.Hashtable();
         this.obstacles = [];
     }
 
@@ -22,11 +26,13 @@ define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
 
     World.prototype.addShip = function(x, y, id) {
 
+        if (!id) throw "Ship must have id";
+
         var ship = new Ship(x, y, id);
 
         ship.world = this;
 
-        this.units.add(ship);
+        this.units.put(ship.id, ship);
 
         return ship;
     };
@@ -35,17 +41,18 @@ define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
 
         var me = null;
 
-        for (var unit of this.units) {
+        this.units.each(function(id, unit) {
 
-            if (unit === target) continue;
+            if (unit === target) return;
 
             var distance = $.distance(target, unit);
 
             if (distance < (unit.size + target.size)) {
                 target.emit("collision", unit);
+                unit.emit("collision", target);
             }
 
-        }
+        });
 
         this.obstacles.forEach(function(me) {
 
@@ -60,27 +67,18 @@ define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
 
     };
 
-    World.prototype.findById = function(id) {
-
-        for (var unit of this.units) {
-            if (unit.id === id) return unit;
-        }
-
-        return null;
-    };
-
     World.prototype.removeUnit = function(obj) {
-        this.units.delete(obj);
+        this.units.remove(obj.id);
     };
 
     World.prototype.update = function() {
 
         var self = this;
 
-        for (var unit of this.units) {
+        this.units.each(function(id, unit) {
             unit.update();
-            this.checkCollisions(unit);
-        }
+            self.checkCollisions(unit);
+        });
 
         this.obstacles.forEach(function(me) {
             me.update();
@@ -92,7 +90,9 @@ define(['util', 'obstacle', 'ship'], function($, Obstacle, Ship) {
 
         ctx = ctx || this.ctx;
 
-        for (var unit of this.units) unit.draw(ctx);
+        this.units.each(function(id, unit) {
+            unit.draw(ctx);
+        });
 
         this.obstacles.forEach(function(me) {
             me.draw(ctx);
