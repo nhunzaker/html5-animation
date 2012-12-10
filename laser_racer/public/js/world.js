@@ -7,9 +7,7 @@
  */
 
 define([
-    'util',
-    'obstacle',
-    'ship'
+    'util', 'obstacle', 'ship'
 ], function($, Obstacle, Ship) {
 
     function World (canvas) {
@@ -73,24 +71,26 @@ define([
         this.units.remove(obj.id);
     };
 
-    World.prototype.update = function() {
-
+    World.prototype.update = function(delta) {
+        console.log(delta);
         var self = this;
 
         this.units.each(function(id, unit) {
-            unit.update();
+            unit.update(delta);
             self.checkCollisions(unit);
         });
 
         this.obstacles.forEach(function(me) {
-            me.update();
+            me.update(delta);
         });
 
     };
-
-    World.prototype.draw = function(ctx) {
+    
+    World.prototype.render = function(ctx) {
 
         ctx = ctx || this.ctx;
+
+        this.ctx.clearRect(0, 0, this.width, this.height);
 
         this.units.each(function(id, unit) {
             unit.draw(ctx);
@@ -100,13 +100,6 @@ define([
             me.draw(ctx);
         });
 
-    };
-
-    World.prototype.play = function() {
-        requestAnimationFrame(this.play.bind(this));
-        this.ctx.clearRect(0, 0, this.width, this.height);
-        this.update();
-        this.draw();
     };
 
     return World;

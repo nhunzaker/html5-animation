@@ -47,14 +47,14 @@ define(['util'], function($) {
 
     }
 
-    Bullet.prototype.update = function() {
+    Bullet.prototype.update = function(delta) {
 
         var angle = this.rotation,
             ax = Math.cos(angle) * this.thrust,
             ay = Math.sin(angle) * this.thrust;
 
-        this.vx += ax - (this.vx * 0.05);
-        this.vy += ay - (this.vy * 0.05);
+        this.vx += delta * (ax - (this.vx * 0.05));
+        this.vy += delta * (ay - (this.vy * 0.05));
 
         this.x += this.vx;
         this.y += this.vy;
